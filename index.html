@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>宝くじシミュレータ｜年末ジャンボ</title>
+  <meta name="description" content="年末ジャンボ宝くじを自動で連続購入し、使った金額・当選総額・回収率・当選確率をリアルタイムに可視化するシミュレータ。" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>🎫 宝くじシミュレータ</h1>
+    <p class="subtitle">年末ジャンボ宝くじ（1枚 300円）を自動で買い続けると、収支はどうなる？</p>
+  </header>
+
+  <!-- 操作パネル -->
+  <section class="controls" aria-label="操作">
+    <div class="controls-row">
+      <button id="toggle" class="btn btn-primary" type="button">▶ 開始</button>
+      <button id="reset" class="btn" type="button">↺ リセット</button>
+    </div>
+
+    <div class="controls-row speed-row" role="group" aria-label="購入速度">
+      <span class="controls-label">速度</span>
+      <div id="speedButtons" class="speed-buttons"></div>
+    </div>
+
+    <div class="controls-row budget-row">
+      <label class="controls-label" for="budget">予算上限</label>
+      <div class="budget-input">
+        <input id="budget" type="number" inputmode="numeric" min="0" step="10000"
+               placeholder="無制限（空欄）" />
+        <span class="unit">円</span>
+      </div>
+      <span class="hint">使い切ると自動停止します</span>
+    </div>
+  </section>
+
+  <!-- 上段：購入中のくじ ＋ 主要指標 -->
+  <section class="top-grid">
+    <div class="card ticket-card" id="ticketCard">
+      <div class="ticket-head">
+        <span class="ticket-round" id="ticketRound">第1000回 年末ジャンボ</span>
+        <span class="ticket-status" id="ticketStatus">待機中</span>
+      </div>
+      <div class="ticket-number" id="ticketNumber">— 組 ——————</div>
+      <div class="ticket-result" id="ticketResult">開始ボタンを押してください</div>
+    </div>
+
+    <div class="card stats-card">
+      <div class="stat">
+        <span class="stat-label">使った金額</span>
+        <span class="stat-value" id="statSpent">¥0</span>
+        <span class="stat-sub" id="statCount">0 枚</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">当選総額</span>
+        <span class="stat-value gold" id="statWon">¥0</span>
+        <span class="stat-sub" id="statHits">当選 0 回</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">収支</span>
+        <span class="stat-value" id="statBalance">¥0</span>
+        <span class="stat-sub" id="statRate">回収率 —</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 収支グラフ -->
+  <section class="card chart-card">
+    <div class="card-title-row">
+      <h2 class="card-title">回収率の推移</h2>
+      <span class="legend">
+        <span class="legend-item"><i class="swatch swatch-actual"></i>実測 回収率</span>
+        <span class="legend-item"><i class="swatch swatch-theory"></i>理論還元率 <b id="theoryRate">45.83%</b></span>
+      </span>
+    </div>
+    <canvas id="chart" class="chart-canvas"></canvas>
+    <p class="chart-note" id="chartNote">買い続けるほど、回収率は理論還元率に近づいていきます。</p>
+  </section>
+
+  <!-- 下段：等級別内訳 ＋ 当選履歴 -->
+  <section class="bottom-grid">
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">等級別の内訳</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="breakdown" id="breakdownTable">
+          <thead>
+            <tr>
+              <th>等級</th>
+              <th class="num">当選金</th>
+              <th class="num">当選確率</th>
+              <th class="num">当選回数</th>
+              <th class="num">合計</th>
+            </tr>
+          </thead>
+          <tbody id="breakdownBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">当選履歴</h2>
+        <label class="filter">
+          <span>表示:</span>
+          <select id="logFilter">
+            <option value="3000">すべての当選</option>
+            <option value="10000">1万円以上</option>
+            <option value="100000">10万円以上</option>
+            <option value="1000000">100万円以上</option>
+            <option value="10000000">1000万円以上</option>
+            <option value="100000000">1億円以上</option>
+          </select>
+        </label>
+      </div>
+      <ul class="log" id="logList">
+        <li class="log-empty">当選するとここに表示されます（6等以上を記録）</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>各くじは独立に抽選される近似モデルです。確率・賞金は年末ジャンボの代表的な構成（1ユニット2,000万枚）に基づきます。</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
