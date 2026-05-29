@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd agent: runs the ccusage collector once a day at 09:00 local time.
+
+  Install (see README.md for full steps):
+    1. Edit the two REPLACE_ME paths below.
+    2. cp this file to ~/Library/LaunchAgents/com.user.ccusage-daily.plist
+    3. launchctl load ~/Library/LaunchAgents/com.user.ccusage-daily.plist
+
+  If the Mac is asleep at 09:00, launchd runs the job as soon as it wakes
+  (RunAtLoad also makes it run once right after loading, so you can verify it).
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.ccusage-daily</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <!-- REPLACE_ME: absolute path to collect.sh in your checkout -->
+        <string>/Users/REPLACE_ME/takarakuji-simulator/tools/ccusage-daily/collect.sh</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>USAGE_REPO_DIR</key>
+        <!-- REPLACE_ME: local clone of the repo that stores usage data -->
+        <string>/Users/REPLACE_ME/claude-usage-log</string>
+        <key>USAGE_BRANCH</key>
+        <string>main</string>
+    </dict>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/ccusage-daily.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/ccusage-daily.err.log</string>
+</dict>
+</plist>
